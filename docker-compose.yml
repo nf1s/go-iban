@@ -1,0 +1,10 @@
+version: "3"
+
+services:
+  web:
+    build: .
+    command: bash -c "./build/build"
+    volumes:
+      - .:/code
+    ports:
+      - "8080:8080"

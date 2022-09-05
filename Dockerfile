@@ -20,5 +20,4 @@ COPY --from=build /build /build
 
 EXPOSE 8080
 
-
 ENTRYPOINT ["/build"]
