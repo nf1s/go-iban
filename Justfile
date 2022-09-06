@@ -1,11 +1,14 @@
 build:
-	@go build .
+	@go build -gcflags="all=-N -l" -o iban
 
 run:
 	@go run .
 
-debug:
-	@arch -arm64 dlv debug main.go
+pid proc:
+	@ps aux | grep {{proc}}
+
+debug pid:
+	@arch -arm64 dlv attach {{pid}}
 
 test:
 	@go test

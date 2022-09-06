@@ -1,11 +1,17 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"fmt"
+	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 func main() {
-	r := gin.Default()
-	r.GET("/health", health)
-	r.Run()
+	r := mux.NewRouter()
+	r.HandleFunc("/health", healthHandler).Methods("GET")
+	r.HandleFunc("/iban", ibanHandler).Methods("POST")
+	fmt.Println("server running at 8080")
+	http.ListenAndServe(":8080", r)
+
 }
