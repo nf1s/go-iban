@@ -13,11 +13,7 @@ func (iban *Iban) getIbanInNumbers() string {
 	ibanInNumbers := ""
 	for _, char := range iban.Value {
 		_char := string(char)
-		if isNum(string(_char)) {
-			ibanInNumbers += _char
-		} else {
-			ibanInNumbers += string('A' - 1 + char)
-		}
+		ibanInNumbers += IBAN_NUM[_char]
 	}
 	return ibanInNumbers
 }

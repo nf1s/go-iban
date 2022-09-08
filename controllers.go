@@ -5,12 +5,18 @@ import (
 	"net/http"
 )
 
-func response(w http.ResponseWriter, body any) {
+func response(w http.ResponseWriter, statusCode int, body any) {
+	w.WriteHeader(statusCode)
 	json.NewEncoder(w).Encode(body)
 }
 
+func createMessage(key string, value string) map[string]string {
+	return map[string]string{key: value}
+
+}
+
 func healthHandler(w http.ResponseWriter, r *http.Request) {
-	response(w, map[string]string{"status": "Ok"})
+	response(w, http.StatusOK, createMessage("status", "Ok"))
 
 }
 
@@ -26,11 +32,11 @@ func ibanHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	if !iban.isAlphanumeric() {
-		msg := "Iban is not alphanumeric"
-		http.Error(w, msg, http.StatusUnprocessableEntity)
+		msg := createMessage("ValidationError", "Iban is not alphanumeric")
+		response(w, http.StatusUnprocessableEntity, msg)
 		return
 	}
 
-	response(w, map[string]string{"iban": iban.Value})
+	response(w, http.StatusOK, createMessage("Iban", iban.getIbanInNumbers()))
 
 }
