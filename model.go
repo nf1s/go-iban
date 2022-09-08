@@ -1,12 +1,23 @@
 package main
 
-import "regexp"
-
-type Payload struct {
-	Iban string `json:iban`
+type Iban struct {
+	Value string `json:"iban"`
 }
 
-func (p *Payload) isAlphanumeric() bool {
-	return regexp.MustCompile(`^[a-zA-Z0-9]*$`).MatchString(p.Iban)
+func (iban *Iban) isAlphanumeric() bool {
+	return isAlphanumeric(iban.Value)
 
+}
+
+func (iban *Iban) getIbanInNumbers() string {
+	ibanInNumbers := ""
+	for _, char := range iban.Value {
+		_char := string(char)
+		if isNum(string(_char)) {
+			ibanInNumbers += _char
+		} else {
+			ibanInNumbers += string('A' - 1 + char)
+		}
+	}
+	return ibanInNumbers
 }

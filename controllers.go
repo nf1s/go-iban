@@ -10,14 +10,14 @@ func response(w http.ResponseWriter, body any) {
 }
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
-	response(w, map[string]string{"Status": "Ok"})
+	response(w, map[string]string{"status": "Ok"})
 
 }
 
 func ibanHandler(w http.ResponseWriter, r *http.Request) {
-	var payload Payload
+	var iban Iban
 
-	err := json.NewDecoder(r.Body).Decode(&payload)
+	err := json.NewDecoder(r.Body).Decode(&iban)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -25,11 +25,12 @@ func ibanHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "application/json")
 
-	if !payload.isAlphanumeric() {
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		response(w, map[string]string{"ValidationError": "Iban is not alphanumeric"})
+	if !iban.isAlphanumeric() {
+		msg := "Iban is not alphanumeric"
+		http.Error(w, msg, http.StatusUnprocessableEntity)
 		return
 	}
 
-	json.NewEncoder(w).Encode(map[string]interface{}{"iban": payload.Iban})
+	response(w, map[string]string{"iban": iban.Value})
+
 }
