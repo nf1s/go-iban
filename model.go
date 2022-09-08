@@ -19,3 +19,15 @@ func (iban *Iban) getIbanInNumbers() string {
 	}
 	return ibanInNumbers
 }
+
+func (iban *Iban) getCountryCode() string {
+	return strings.ToUpper(iban.Value[:2])
+}
+
+func (iban *Iban) getHeader() string {
+	return iban.Value[:4]
+}
+
+func (iban *Iban) getBBAN() string {
+	return iban.Value[4:]
+}
