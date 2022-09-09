@@ -10,8 +10,8 @@ func response(w http.ResponseWriter, statusCode int, body any) {
 	json.NewEncoder(w).Encode(body)
 }
 
-func createMessage(key string, value string) map[string]string {
-	return map[string]string{key: value}
+func createMessage(key string, value any) map[string]any {
+	return map[string]any{key: value}
 
 }
 
@@ -37,6 +37,6 @@ func ibanHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response(w, http.StatusOK, createMessage("Iban", iban.getIbanInNumbers()))
+	response(w, http.StatusOK, createMessage("Iban", iban.isMod97()))
 
 }
