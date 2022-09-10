@@ -14,7 +14,13 @@ func getIbanToNumMap() map[string]string {
 	return m
 }
 
+func getIbanRules() [][]string {
+	return readCSVFile("data/ibans.csv")
+
+}
+
 var IBAN_NUM = getIbanToNumMap()
+var IBAN_RULES = getIbanRules()
 
 const ALPHA = "a"
 const ALPHANUMERIC = "c"

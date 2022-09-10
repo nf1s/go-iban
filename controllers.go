@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -37,6 +38,28 @@ func ibanHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response(w, http.StatusOK, createMessage("Iban", iban.isMod97()))
+	if !iban.isSizeCorrect() {
+		size := iban.size()
+		requiredSize := iban.countrySpecificIbanSize()
+		err := fmt.Sprintf("Iban size of %d is not correct, should be %d", size, requiredSize)
+		msg := createMessage("ValidationError", err)
+		response(w, http.StatusUnprocessableEntity, msg)
+		return
+	}
+
+	if !iban.isMod97() {
+		msg := createMessage("ValidationError", "mod 97 operation fails")
+		response(w, http.StatusUnprocessableEntity, msg)
+		return
+	}
+
+	if !iban.isBBANFormatCorrect() {
+		err := fmt.Sprintf("BBAN is not in the correct format, should be %s", iban.BBANFormat())
+		msg := createMessage("ValidationError", err)
+		response(w, http.StatusUnprocessableEntity, msg)
+		return
+	}
+
+	response(w, http.StatusOK, createMessage("Iban", iban.isBBANFormatCorrect()))
 
 }
