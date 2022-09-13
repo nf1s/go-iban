@@ -7,8 +7,11 @@ run:
 pid proc:
 	@ps aux | grep {{proc}}
 
-debug pid:
+attach pid:
 	@arch -arm64 dlv attach {{pid}}
+
+debug:
+	@arch -arm64 dlv debug .
 
 test:
 	@go test
