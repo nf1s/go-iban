@@ -1,19 +1,13 @@
 package main
 
-import (
-	"fmt"
-	"log"
-	"net/http"
-
-	"github.com/gorilla/mux"
-)
+import "os"
 
 func main() {
-	r := mux.NewRouter()
-	r.HandleFunc("/health", healthHandler).Methods("GET")
-	r.HandleFunc("/iban", ibanHandler).Methods("POST")
-	fmt.Println("server running at 8080")
-	err := http.ListenAndServe(":8080", r)
-	log.Fatal(err)
+	app := App{}
+	app.Initialize(
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_NAME"))
+	app.Run()
 
 }

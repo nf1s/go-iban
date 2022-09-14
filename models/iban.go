@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	"math/big"
 	"strings"
@@ -8,6 +9,7 @@ import (
 
 type Iban struct {
 	Value string `json:"iban"`
+	DB    *sql.DB
 }
 
 func (iban *Iban) countryCode() string {
@@ -41,7 +43,7 @@ func (iban *Iban) mod97() int64 {
 }
 
 func (iban *Iban) countryRules() IbanFormat {
-	f := getIbanFormat(iban.countryCode())
+	f := getIbanFormat(iban.DB, iban.countryCode())
 	return f
 }
 
