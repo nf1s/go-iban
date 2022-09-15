@@ -16,7 +16,6 @@ type App struct {
 }
 
 func (app *App) Initialize(dbURL string) {
-	dbMigrate(dbURL)
 	app.DB = initDB(dbURL)
 	app.Router = mux.NewRouter()
 	app.Router.HandleFunc("/health", app.healthHandler).Methods("GET")

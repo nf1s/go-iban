@@ -31,7 +31,7 @@ func strToBigInt(value string) *big.Int {
 func strtoInt(value string) int {
 	_int, err := strconv.Atoi(value)
 	if err != nil {
-		panic("unable to convert ")
+		panic("unable to convert")
 
 	}
 	return _int

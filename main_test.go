@@ -20,7 +20,7 @@ func TestMain(m *testing.M) {
 	ensureTableExists()
 	populateTable()
 	code := m.Run()
-	clearTable()
+	dropTable()
 	os.Exit(code)
 }
 
@@ -31,10 +31,14 @@ func ensureTableExists() {
 }
 
 func clearTable() {
-	a.DB.Exec("DELETE FROM test;")
+	a.DB.Exec("DELETE FROM iban;")
 }
 
-const tableCreationQuery = `CREATE TABLE IF NOT EXISTS test (
+func dropTable() {
+	a.DB.Exec("DROP TABLE IF EXISTS iban;")
+}
+
+const tableCreationQuery = `CREATE TABLE IF NOT EXISTS iban (
 	countryCode		char(2) PRIMARY KEY NOT NULL,
 	country	 			varchar NOT NULL,
 	size					int NOT NULL,
@@ -43,7 +47,7 @@ const tableCreationQuery = `CREATE TABLE IF NOT EXISTS test (
 )`
 
 func populateTable() {
-	_, err := a.DB.Exec("INSERT INTO test VALUES($1, $2, $3, $4, $5);",
+	_, err := a.DB.Exec("INSERT INTO iban VALUES($1, $2, $3, $4, $5);",
 		"AL", "Albania", "28", "8n-16c", "ALkk bbb s sss x cccc cccc cccc cccc")
 	if err != nil {
 		log.Printf("There was an error with insering data")
@@ -73,7 +77,6 @@ func checkResponseBody(t *testing.T, expected, actual any) {
 }
 
 func TestCorrectIban(t *testing.T) {
-	clearTable()
 	response := executeRequest(http.MethodPost, "/iban", []byte(`{"iban":"AL35202111090000000001234567"}`))
 	checkResponseCode(t, http.StatusOK, response.Code)
 
@@ -81,10 +84,10 @@ func TestCorrectIban(t *testing.T) {
 	json.Unmarshal(response.Body.Bytes(), &body)
 	expectedBody := map[string]bool{"Iban": true}
 	checkResponseBody(t, expectedBody, body)
+
 }
 
 func TestInvalidIbanSize(t *testing.T) {
-	clearTable()
 	response := executeRequest(http.MethodPost, "/iban", []byte(`{"iban":"AL3520211109000000000123456"}`))
 	checkResponseCode(t, http.StatusUnprocessableEntity, response.Code)
 
@@ -92,10 +95,10 @@ func TestInvalidIbanSize(t *testing.T) {
 	json.Unmarshal(response.Body.Bytes(), &body)
 	expectedBody := map[string]string{"ValidationError": "Iban size of 27 is not correct, should be 28"}
 	checkResponseBody(t, expectedBody, body)
+
 }
 
 func TestInvalidIbanMod97Operation(t *testing.T) {
-	clearTable()
 	response := executeRequest(http.MethodPost, "/iban", []byte(`{"iban":"ALAA202111090000000001234567"}`))
 	checkResponseCode(t, http.StatusUnprocessableEntity, response.Code)
 
@@ -103,4 +106,5 @@ func TestInvalidIbanMod97Operation(t *testing.T) {
 	json.Unmarshal(response.Body.Bytes(), &body)
 	expectedBody := map[string]string{"ValidationError": "mod 97 operation fails"}
 	checkResponseBody(t, expectedBody, body)
+
 }
