@@ -5,7 +5,6 @@ import (
 	"fmt"
 	models "iban-go/models"
 	"net/http"
-	"runtime"
 )
 
 func response(w http.ResponseWriter, statusCode int, body any) {
@@ -24,7 +23,6 @@ func (app *App) healthHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) ibanHandler(w http.ResponseWriter, r *http.Request) {
-	runtime.Breakpoint()
 	iban := models.Iban{DB: app.DB}
 
 	err := json.NewDecoder(r.Body).Decode(&iban)
