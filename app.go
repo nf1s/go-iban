@@ -15,10 +15,10 @@ type App struct {
 	DB     *sql.DB
 }
 
-func (app *App) Initialize() {
-	app.DB = initDB()
+func (app *App) Initialize(dbURL string) {
+	dbMigrate(dbURL)
+	app.DB = initDB(dbURL)
 	app.Router = mux.NewRouter()
-	DBMigrate()
 }
 
 func (app *App) Run() {

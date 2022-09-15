@@ -11,9 +11,9 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func initDB() *sql.DB {
+func initDB(dbURL string) *sql.DB {
 
-	db, err := sql.Open("postgres", DB_URL)
+	db, err := sql.Open("postgres", dbURL)
 
 	if err != nil {
 		log.Fatal(err)
@@ -25,10 +25,8 @@ func initDB() *sql.DB {
 	return db
 }
 
-func DBMigrate() {
-	m, err := migrate.New(
-		MIGRATIONS_DIR,
-		DB_URL)
+func dbMigrate(dbURL string) {
+	m, err := migrate.New(MIGRATIONS_DIR, dbURL)
 
 	if err != nil {
 		log.Fatal("db migrations failed")
