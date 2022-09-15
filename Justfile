@@ -1,3 +1,6 @@
+default:
+	@just --list
+
 build:
 	@go build -gcflags="all=-N -l" -o iban
 
@@ -15,3 +18,6 @@ debug:
 
 test:
 	@go test
+
+cli arg:
+	@./cli/cli arg

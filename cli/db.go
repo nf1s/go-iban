@@ -8,7 +8,8 @@ import (
 )
 
 func dbSession() *sql.DB {
-	db, err := sql.Open("postgres", "postgres://iban:iban@localhost/iban?sslmode=disable")
+
+	db, err := sql.Open("postgres", DB_URL)
 
 	if err != nil {
 		log.Fatal(err)

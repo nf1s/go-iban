@@ -2,14 +2,18 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
+
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 
 	_ "github.com/lib/pq"
 )
 
-func initDB(user, pwd, dbname string) *sql.DB {
-	db, err := sql.Open("postgres", fmt.Sprintf("postgres://%s:%s@localhost/%s?sslmode=disable", user, pwd, dbname))
+func initDB() *sql.DB {
+
+	db, err := sql.Open("postgres", DB_URL)
 
 	if err != nil {
 		log.Fatal(err)
@@ -19,4 +23,16 @@ func initDB(user, pwd, dbname string) *sql.DB {
 		log.Fatal(err)
 	}
 	return db
+}
+
+func DBMigrate() {
+	m, err := migrate.New(
+		MIGRATIONS_DIR,
+		DB_URL)
+
+	if err != nil {
+		log.Fatal("db migrations failed")
+
+	}
+	m.Up()
 }

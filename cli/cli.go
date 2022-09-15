@@ -24,7 +24,7 @@ func commands() {
 			Aliases: []string{"p"},
 			Usage:   "parse csv and adds data to postgres db",
 			Action: func(c *cli.Context) {
-				countries := readCSVFile("../data/ibans.csv")
+				countries := readCSVFile("./data/ibans.csv")
 				populateIbans(countries)
 			},
 		},

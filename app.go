@@ -15,15 +15,16 @@ type App struct {
 	DB     *sql.DB
 }
 
-func (app *App) Initialize(user, pwd, dbname string) {
-	app.DB = initDB(user, pwd, dbname)
+func (app *App) Initialize() {
+	app.DB = initDB()
 	app.Router = mux.NewRouter()
+	DBMigrate()
 }
 
 func (app *App) Run() {
 	app.Router.HandleFunc("/health", app.healthHandler).Methods("GET")
 	app.Router.HandleFunc("/iban", app.ibanHandler).Methods("POST")
-	fmt.Println("server running at 8080")
-	err := http.ListenAndServe(":8080", app.Router)
+	fmt.Printf("server running at %s", PORT)
+	err := http.ListenAndServe(PORT, app.Router)
 	log.Fatal(err)
 }
