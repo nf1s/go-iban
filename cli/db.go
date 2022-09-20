@@ -5,16 +5,27 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	_ "github.com/lib/pq"
 )
+
+func DBHost() string {
+	docker, _ := strconv.ParseBool(os.Getenv("DOCKER"))
+	if docker {
+		return "db"
+
+	}
+	return "localhost"
+
+}
 
 func dbSession() *sql.DB {
 
 	var USER = os.Getenv("DB_USER")
 	var PASSWORD = os.Getenv("DB_PASSWORD")
 	var DB_NAME = os.Getenv("DB_NAME")
-	var DB_URL = fmt.Sprintf("postgres://%s:%s@localhost/%s?sslmode=disable", USER, PASSWORD, DB_NAME)
+	var DB_URL = fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", USER, PASSWORD, DBHost(), DB_NAME)
 	db, err := sql.Open("postgres", DB_URL)
 
 	if err != nil {
@@ -26,5 +37,3 @@ func dbSession() *sql.DB {
 	}
 	return db
 }
-
-var db = dbSession()

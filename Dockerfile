@@ -1,23 +1,24 @@
 # syntax=docker/dockerfile:1
 
 ## Build
-FROM golang:1.18-buster AS build
+FROM golang:1.19-buster AS build
 
 WORKDIR /app
 
-COPY go.mod ./
-COPY go.sum ./
+COPY . ./
 RUN go mod download
 
-COPY *.go ./
-
-RUN go build -o /build
+RUN go build -o iban
+RUN cd cli && go build -o cli
 
 ## Deploy
-FROM golang:1.18-buster
+FROM golang:1.19-buster
 
-COPY --from=build /build /build
+WORKDIR /build
+RUN curl -L https://github.com/golang-migrate/migrate/releases/download/v4.15.2/migrate.linux-amd64.tar.gz | tar xvz
+COPY --from=build /app/iban /build/iban
+COPY --from=build /app/cli/cli /build/cli/cli
+COPY --from=build /app/migrations/ /build/migrations
+COPY --from=build /app/data/ /build/data
 
 EXPOSE 8080
-
-ENTRYPOINT ["/build"]

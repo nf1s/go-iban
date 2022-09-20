@@ -5,6 +5,7 @@ import (
 )
 
 func populateIbans(countries [][]string) {
+	db := dbSession()
 	for index, elem := range countries {
 		if index == 0 {
 			continue

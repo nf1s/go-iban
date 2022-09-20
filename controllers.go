@@ -3,8 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	models "iban-go/models"
 	"net/http"
+
+	models "iban/models"
 )
 
 func response(w http.ResponseWriter, statusCode int, body any) {
