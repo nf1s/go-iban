@@ -1,0 +1,17 @@
+# syntax=docker/dockerfile:1
+
+## Build
+FROM golang:1.19-buster AS build
+
+WORKDIR /app
+
+COPY . ./
+RUN go mod download
+
+
+## Deploy
+FROM golang:1.19-buster
+
+WORKDIR /build
+RUN curl -L https://github.com/golang-migrate/migrate/releases/download/v4.15.2/migrate.linux-amd64.tar.gz | tar xvz
+COPY --from=build /app/migrations/ /build/migrations

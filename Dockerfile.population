@@ -8,12 +8,11 @@ WORKDIR /app
 COPY . ./
 RUN go mod download
 
-RUN go build -o iban
+RUN cd cli && go build -o cli
 
 ## Deploy
 FROM golang:1.19-buster
 
 WORKDIR /build
-COPY --from=build /app/iban /build/iban
-
-EXPOSE 8080
+COPY --from=build /app/cli/cli /build/cli/cli
+COPY --from=build /app/data/ /build/data

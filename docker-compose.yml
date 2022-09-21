@@ -10,7 +10,9 @@ services:
       - POSTGRES_PASSWORD=test
       - POSTGRES_DB=test
   migration:
-    build: .
+    build:
+      context: .
+      dockerfile: ./Dockerfile.migration
     command: bash -c "./migrate -source file://migrations -database postgres://test:test@db:5432/test?sslmode=disable up"
     env_file:
       - db.env
@@ -19,7 +21,9 @@ services:
     depends_on:
       - db
   population:
-    build: .
+    build:
+      context: .
+      dockerfile: ./Dockerfile.population
     command: bash -c "./cli/cli populate"
     env_file:
       - db.env
