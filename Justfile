@@ -1,3 +1,5 @@
+url := 'https://app.circleci.com/pipelines/github/fyndiq/deployit?branch=master'
+
 default:
 	@just --list
 
@@ -24,3 +26,6 @@ test:
 
 cli arg:
 	@./cli/cli {{arg}}
+
+view:
+  @{{ if os() =~ "macos.*" { "open " +url } else { "xdg-open "+url } }}
