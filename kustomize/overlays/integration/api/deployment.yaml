@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iban-api-service
+spec:
+  template:
+    spec:
+      containers:
+      - name: app
+        resources:
+          requests:
+            cpu: "15m"
+            memory: "64Mi"
+          limits:
+            memory: "96Mi"
+      - name: cloud-sql-proxy
+        command:
+        - "/cloud_sql_proxy"
+        - "--dir=/cloudsql"
+        - "-instances=pfc:europe-west1:integration-common-postgresql=tcp:5432"
+        - "-credential_file=/secrets/cloudsql/credentials.json"
+        - "-term_timeout=30s"

@@ -1,0 +1,3 @@
+postgresqlUsername: iban-service
+postgresqlPassword: iban-service-password
+postgresqlDatabase: iban-service

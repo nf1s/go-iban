@@ -1,0 +1,10 @@
+bases:
+  - ../../bases/cloud
+patchesStrategicMerge:
+  - api/deployment.yaml
+  - api/hpa.yaml
+configMapGenerator:
+  - name: iban-service
+    behavior: merge
+    envs:
+      - config.env

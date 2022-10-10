@@ -1,0 +1,9 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iban-api-service
+spec:
+  template:
+    metadata:
+      annotations:
+        ad.datadoghq.com/app.logs: '[{"source":"logstash","service":"iban-api-service"}]'

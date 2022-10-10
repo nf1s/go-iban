@@ -7,7 +7,7 @@ import (
 )
 
 var MIGRATIONS_DIR = "file://migrations"
-var PORT = ":8080"
+var PORT = ":8000"
 
 func DBHost() string {
 	docker, _ := strconv.ParseBool(os.Getenv("DOCKER"))
@@ -15,7 +15,7 @@ func DBHost() string {
 		return "db"
 
 	}
-	return "localhost"
+	return os.Getenv("DB_HOST")
 
 }
 

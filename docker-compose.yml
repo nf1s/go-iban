@@ -33,14 +33,16 @@ services:
       - migration
       - db
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: ./Dockerfile.web
     command: bash -c "./iban"
     volumes:
       - .:/app
     env_file:
       - db.env
     ports:
-      - "8080:8080"
+      - "8000:8000"
     depends_on:
       - db
       - migration

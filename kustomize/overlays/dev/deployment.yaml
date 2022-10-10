@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iban-api-service
+spec:
+  template:
+    spec:
+      initContainers:
+      - name: init-database
+        image: iban/iban-go-service:latest
+        command: ["sh" ,"-c", "./migrate -source file://migrations -database postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_NAME}?sslmode=disable up"]
+        envFrom:
+          - configMapRef:
+              name: iban-service
+      - name: populate-database
+        image: iban/iban-go-service:latest
+        command: ["sh","-c", "./cli/cli populate"]
+        envFrom:
+          - configMapRef:
+              name: iban-service
