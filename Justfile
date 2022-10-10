@@ -35,3 +35,6 @@ migrate:
 
 deploy:
 	@skaffold run
+
+delete:
+	@skaffold delete
