@@ -1,3 +1,5 @@
+url := 'https://app.circleci.com/pipelines/github/nf1s/iban?branch=master'
+
 default:
 	@just --list
 
@@ -24,3 +26,15 @@ test:
 
 cli arg:
 	@./cli/cli {{arg}}
+
+view:
+  @{{ if os() =~ "macos.*" { "open " +url } else { "xdg-open "+url } }}
+
+migrate:
+	@./migrate -source file://migrations -database postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_NAME}?sslmode=disable up
+
+deploy:
+	@skaffold run
+
+delete:
+	@skaffold delete

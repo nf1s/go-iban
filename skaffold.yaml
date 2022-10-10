@@ -1,0 +1,28 @@
+apiVersion: skaffold/v1
+kind: Config
+metadata:
+  name: iban-service
+build:
+  artifacts:
+    - image: iban/iban-go-service
+profiles:
+  - name: rancher-desktop
+    build:
+      local:
+        push: false
+    deploy:
+      kubeContext: rancher-desktop
+      kustomize:
+        path: kustomize/overlays/dev/
+      helm:
+        releases:
+          - name: iban-service
+            chartPath: bitnami/postgresql
+            remote: true
+            version: 10.3.18 # fix postgresql version=11.11.0
+            valuesFiles:
+              - helm/postgres/values-dev.yaml
+    activation:
+      - kubeContext: rancher-desktop
+
+

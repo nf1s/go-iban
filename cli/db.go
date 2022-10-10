@@ -16,7 +16,7 @@ func DBHost() string {
 		return "db"
 
 	}
-	return "localhost"
+	return os.Getenv("DB_HOST")
 
 }
 
