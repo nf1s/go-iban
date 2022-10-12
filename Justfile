@@ -38,3 +38,6 @@ deploy:
 
 delete:
 	@skaffold delete
+
+manifests:
+	@./scripts/manifests.sh
