@@ -20,7 +20,7 @@ type ibanController struct {
 }
 
 func NewIbanController(s service.IbanService) IbanController {
-	return ibanController{
+	return &ibanController{
 		ibanService: s}
 }
 
@@ -34,17 +34,17 @@ func createMessage(key string, value any) map[string]any {
 
 }
 
-func (c ibanController) HealthCheck(w http.ResponseWriter, r *http.Request) {
+func (c *ibanController) HealthCheck(w http.ResponseWriter, r *http.Request) {
 	response(w, http.StatusOK, createMessage("status", "Ok"))
 
 }
 
-func (c ibanController) ValidateIban(w http.ResponseWriter, r *http.Request) {
+func (c *ibanController) ValidateIban(w http.ResponseWriter, r *http.Request) {
 	var iban Iban
 
 	err := json.NewDecoder(r.Body).Decode(&iban)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		response(w, http.StatusBadRequest, createMessage("Problem with request payload", err.Error()))
 		return
 	}
 
@@ -52,9 +52,9 @@ func (c ibanController) ValidateIban(w http.ResponseWriter, r *http.Request) {
 	valid, err := c.ibanService.ValidateIban(iban.Value)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+		response(w, http.StatusUnprocessableEntity, createMessage("Iban", map[string]any{"valid": valid, "error": err.Error()}))
 		return
 	}
-	response(w, http.StatusOK, createMessage("Iban is valid", valid))
+	response(w, http.StatusOK, createMessage("Iban", map[string]bool{"valid": valid}))
 
 }

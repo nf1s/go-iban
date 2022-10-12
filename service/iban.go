@@ -15,11 +15,11 @@ type ibanService struct {
 }
 
 func NewIbanService(r repository.IbanRepository) IbanService {
-	return ibanService{
+	return &ibanService{
 		ibanRepository: r}
 }
 
-func (s ibanService) ValidateIban(iban string) (bool, error) {
+func (s *ibanService) ValidateIban(iban string) (bool, error) {
 	s.ibanRepository.SetIbanValue(iban)
 	if !s.ibanRepository.IsAlphanumeric() {
 		return false, errors.New("Iban is not alphanumeric")

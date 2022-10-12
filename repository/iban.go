@@ -30,30 +30,30 @@ type ibanRepository struct {
 }
 
 func NewIbanRepository(db *sql.DB) IbanRepository {
-	return ibanRepository{DB: db}
+	return &ibanRepository{DB: db}
 }
 
-func (iban ibanRepository) SetIbanValue(value string) {
+func (iban *ibanRepository) SetIbanValue(value string) {
 	iban.value = value
 }
 
-func (iban ibanRepository) countryCode() string {
+func (iban *ibanRepository) countryCode() string {
 	return strings.ToUpper(iban.value[:2])
 }
 
-func (iban ibanRepository) header() string {
+func (iban *ibanRepository) header() string {
 	return iban.value[:4]
 }
 
-func (iban ibanRepository) BBAN() string {
+func (iban *ibanRepository) BBAN() string {
 	return iban.value[4:]
 }
 
-func (iban ibanRepository) invertedIban() string {
+func (iban *ibanRepository) invertedIban() string {
 	return iban.BBAN() + iban.header()
 }
 
-func (iban ibanRepository) inNumbers() string {
+func (iban *ibanRepository) inNumbers() string {
 	ibanInNumbers := ""
 	for _, char := range iban.invertedIban() {
 		_char := string(char)
@@ -62,32 +62,32 @@ func (iban ibanRepository) inNumbers() string {
 	return ibanInNumbers
 }
 
-func (iban ibanRepository) mod97() int64 {
+func (iban *ibanRepository) mod97() int64 {
 	mod97 := new(big.Int).Mod(strToBigInt(iban.inNumbers()), strToBigInt("97"))
 	return mod97.Int64()
 }
 
-func (iban ibanRepository) countryRules() models.IbanFormat {
+func (iban *ibanRepository) countryRules() models.IbanFormat {
 	return models.GetIbanFormats(iban.DB, iban.countryCode())
 }
 
-func (iban ibanRepository) country() string {
+func (iban *ibanRepository) country() string {
 	return iban.countryRules().Country
 }
 
-func (iban ibanRepository) CountrySpecificIbanSize() int {
+func (iban *ibanRepository) CountrySpecificIbanSize() int {
 	return strtoInt(iban.countryRules().Size)
 }
 
-func (iban ibanRepository) BBANFormat() string {
+func (iban *ibanRepository) BBANFormat() string {
 	return iban.countryRules().BBANFormat
 }
 
-func (iban ibanRepository) IbanFormat() string {
+func (iban *ibanRepository) IbanFormat() string {
 	return iban.countryRules().IBANFormat
 }
 
-func (iban ibanRepository) BBANRegex() string {
+func (iban *ibanRepository) BBANRegex() string {
 	bbanFormats := strings.Split(iban.BBANFormat(), "-")
 	var regex string
 
@@ -99,22 +99,22 @@ func (iban ibanRepository) BBANRegex() string {
 	return "^" + regex + "$"
 }
 
-func (iban ibanRepository) Size() int {
+func (iban *ibanRepository) Size() int {
 	return len([]rune(iban.value))
 }
 
-func (iban ibanRepository) IsAlphanumeric() bool {
+func (iban *ibanRepository) IsAlphanumeric() bool {
 	return isAlphanumeric(iban.value)
 }
 
-func (iban ibanRepository) IsSizeCorrect() bool {
+func (iban *ibanRepository) IsSizeCorrect() bool {
 	return iban.Size() == iban.CountrySpecificIbanSize()
 }
 
-func (iban ibanRepository) IsMod97() bool {
+func (iban *ibanRepository) IsMod97() bool {
 	return iban.mod97() == 1
 }
 
-func (iban ibanRepository) IsBBANFormatCorrect() bool {
+func (iban *ibanRepository) IsBBANFormatCorrect() bool {
 	return match(iban.BBANRegex(), iban.BBAN())
 }
