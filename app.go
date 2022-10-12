@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 	"iban/controller"
@@ -13,8 +12,6 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
-
-var ctx = context.Background()
 
 type App struct {
 	Router *mux.Router
